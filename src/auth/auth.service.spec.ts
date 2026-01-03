@@ -68,13 +68,13 @@ describe('AuthService', () => {
                 email_verified: true,
             };
 
-            usersService.findByEmail.mockResolvedValue(null);
-            usersService.create.mockResolvedValue({ _id: 'userId' as any, email: payload.email } as any);
-            jwtService.signAsync.mockResolvedValue('token');
+            jest.spyOn(usersService, 'findByEmail').mockResolvedValue(null);
+            const createSpy = jest.spyOn(usersService, 'create').mockResolvedValue({ _id: 'userId', email: payload.email } as any);
+            jest.spyOn(jwtService, 'signAsync').mockResolvedValue('token');
 
             const result = await service.validateGoogleUser(payload);
 
-            expect(usersService.create).toHaveBeenCalled();
+            expect(createSpy).toHaveBeenCalled();
             expect(result).toHaveProperty('accessToken');
             expect(result).toHaveProperty('refreshToken');
         });
@@ -82,14 +82,23 @@ describe('AuthService', () => {
 
     describe('refreshTokens', () => {
         it('should throw UnauthorizedException if user has no refresh token hash', async () => {
-            usersService.findById.mockResolvedValue({ refreshTokenHash: null } as any);
+            jest.spyOn(usersService, 'findById').mockResolvedValue({ refreshTokenHash: null } as any);
             await expect(service.refreshTokens('userId', 'token')).rejects.toThrow(UnauthorizedException);
         });
 
         it('should throw UnauthorizedException if refresh token does not match', async () => {
             const storedHash = await bcrypt.hash('different_token', 10);
-            usersService.findById.mockResolvedValue({ refreshTokenHash: storedHash } as any);
+            jest.spyOn(usersService, 'findById').mockResolvedValue({ refreshTokenHash: storedHash } as any);
             await expect(service.refreshTokens('userId', 'token')).rejects.toThrow(UnauthorizedException);
+        });
+    });
+
+    describe('logout', () => {
+        it('should call updateRefreshToken with null', async () => {
+            const userId = 'userId';
+            jest.spyOn(usersService, 'updateRefreshToken').mockResolvedValue({} as any);
+            await service.logout(userId);
+            expect(usersService.updateRefreshToken).toHaveBeenCalledWith(userId, null);
         });
     });
 });

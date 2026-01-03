@@ -9,7 +9,7 @@ export class MarketplaceController {
     constructor(private readonly marketplaceService: MarketplaceService) { }
 
     @Post('listings')
-    async createListing(@Req() req: RequestWithUser, @Body() data: any) {
+    async createListing(@Req() req: RequestWithUser, @Body() data: { coordinates: number[];[key: string]: any }) {
         return this.marketplaceService.createListing(req.user.userId, data);
     }
 
