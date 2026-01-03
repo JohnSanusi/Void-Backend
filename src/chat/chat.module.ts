@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
 import { ChatService } from './chat.service';
 import { ChatController } from './chat.controller';
 import { Conversation, ConversationSchema } from './schemas/conversation.schema';
@@ -15,6 +17,8 @@ import { ChatGateway } from './chat.gateway';
             { name: Message.name, schema: MessageSchema },
         ]),
         UsersModule,
+        JwtModule.register({}),
+        ConfigModule,
     ],
     controllers: [ChatController],
     providers: [ChatService, ChatGateway],
