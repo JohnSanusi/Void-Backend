@@ -17,7 +17,7 @@ export class MediaService {
             const uploadStream = cloudinary.uploader.upload_stream(
                 { folder },
                 (error, result) => {
-                    if (error || !result) return reject(error || new Error('Upload failed'));
+                    if (error || !result) return reject(error instanceof Error ? error : new Error('Upload failed'));
                     resolve(result.secure_url);
                 },
             );

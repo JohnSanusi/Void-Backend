@@ -16,7 +16,7 @@ export class FeedService {
     }
 
     async getFeed(limit = 20, lastId?: string, lastCreatedAt?: Date): Promise<PostDocument[]> {
-        const query: any = { visibility: 'public' };
+        const query: { visibility: string; $or?: any[] } = { visibility: 'public' };
 
         if (lastId && lastCreatedAt) {
             query.$or = [
@@ -34,7 +34,7 @@ export class FeedService {
     }
 
     async getReels(limit = 10, lastId?: string, lastCreatedAt?: Date): Promise<PostDocument[]> {
-        const query: any = { type: 'reel', visibility: 'public' };
+        const query: { type: string; visibility: string; $or?: any[] } = { type: 'reel', visibility: 'public' };
 
         if (lastId && lastCreatedAt) {
             query.$or = [
@@ -51,7 +51,7 @@ export class FeedService {
             .exec();
     }
 
-    async toggleLike(postId: string, userId: string): Promise<{ likesCount: number }> {
+    async toggleLike(postId: string): Promise<{ likesCount: number }> {
         // In a real app, you'd have a separate Likes collection to track who liked what.
         // For MVP efficiency, we just increment/decrement. 
         // Optimization: This should be handled atomically.

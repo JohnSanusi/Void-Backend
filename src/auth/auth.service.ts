@@ -13,7 +13,14 @@ export class AuthService {
         private configService: ConfigService,
     ) { }
 
-    async validateGoogleUser(googlePayload: any) {
+    async validateGoogleUser(googlePayload: {
+        email: string;
+        firstName: string;
+        lastName: string;
+        picture: string;
+        sub: string;
+        email_verified: boolean;
+    }) {
         const { email, firstName, lastName, picture, sub: googleId, email_verified } = googlePayload;
 
         if (!email_verified) {

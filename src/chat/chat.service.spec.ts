@@ -15,7 +15,6 @@ const mockConversationModel = () => ({
 const mockMessageModel = () => ({
     find: jest.fn(),
     findById: jest.fn(),
-    save: jest.fn(),
 });
 
 describe('ChatService', () => {
@@ -30,10 +29,12 @@ describe('ChatService', () => {
                 {
                     provide: getModelToken(Conversation.name),
                     useValue: {
+                        find: jest.fn(),
                         findOne: jest.fn(),
                         findById: jest.fn(),
                         findByIdAndUpdate: jest.fn(),
-                        prototype: { save: jest.fn() }, // For new this.conversationModel()
+                        create: jest.fn(),
+                        save: jest.fn(),
                     },
                 },
                 {
@@ -41,7 +42,8 @@ describe('ChatService', () => {
                     useValue: {
                         find: jest.fn(),
                         findById: jest.fn(),
-                        prototype: { save: jest.fn() },
+                        create: jest.fn(),
+                        save: jest.fn(),
                     },
                 },
             ],
@@ -60,7 +62,7 @@ describe('ChatService', () => {
         it('should return existing conversation if it exists', async () => {
             const user1 = new Types.ObjectId().toString();
             const user2 = new Types.ObjectId().toString();
-            convModel.findOne.mockResolvedValue({ _id: 'convId' });
+            (convModel.findOne as jest.Mock).mockResolvedValue({ _id: 'convId' });
 
             const result = await service.findOrCreatePrivateConversation(user1, user2);
 
@@ -77,7 +79,7 @@ describe('ChatService', () => {
                 limit: jest.fn().mockReturnThis(),
                 exec: jest.fn().mockResolvedValue([]),
             };
-            msgModel.find.mockReturnValue(mockFind);
+            (msgModel.find as jest.Mock).mockReturnValue(mockFind);
 
             await service.getMessages(convId);
 

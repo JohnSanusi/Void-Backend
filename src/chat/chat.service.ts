@@ -60,7 +60,9 @@ export class ChatService {
     }
 
     async getMessages(conversationId: string, limit = 50, beforeId?: string): Promise<MessageDocument[]> {
-        const query: any = { conversationId: new Types.ObjectId(conversationId) };
+        const query: { conversationId: Types.ObjectId; createdAt?: { $lt: Date } } = {
+            conversationId: new Types.ObjectId(conversationId),
+        };
         if (beforeId) {
             const beforeMessage = await this.messageModel.findById(beforeId);
             if (beforeMessage) {

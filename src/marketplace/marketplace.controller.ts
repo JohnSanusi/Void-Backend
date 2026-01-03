@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Query, UseGuards, Req, Param, Patch } from '@nestjs/common';
 import { MarketplaceService } from './marketplace.service';
 import { AuthGuard } from '@nestjs/passport';
+import type { RequestWithUser } from '../auth/interfaces/request-with-user.interface';
 
 @Controller('marketplace')
 @UseGuards(AuthGuard('jwt'))
@@ -8,7 +9,7 @@ export class MarketplaceController {
     constructor(private readonly marketplaceService: MarketplaceService) { }
 
     @Post('listings')
-    async createListing(@Req() req, @Body() data: any) {
+    async createListing(@Req() req: RequestWithUser, @Body() data: any) {
         return this.marketplaceService.createListing(req.user.userId, data);
     }
 
@@ -38,7 +39,7 @@ export class MarketplaceController {
 
     @Patch('listings/:id/status')
     async updateStatus(
-        @Req() req,
+        @Req() req: RequestWithUser,
         @Param('id') id: string,
         @Body('status') status: 'active' | 'sold',
     ) {

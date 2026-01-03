@@ -40,7 +40,7 @@ export class StatusService {
         const alreadyViewed = status.viewers.list.some(v => v.userId.toString() === userId);
         if (!alreadyViewed) {
             // Capping viewer list to 100 for record keeping; count remains accurate
-            const updateQuery: any = {
+            const updateQuery: { $inc: { 'viewers.count': number }; $push?: { 'viewers.list': any } } = {
                 $inc: { 'viewers.count': 1 },
             };
 

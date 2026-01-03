@@ -7,7 +7,7 @@ import { Listing, ListingDocument } from './schemas/listing.schema';
 export class MarketplaceService {
     constructor(@InjectModel(Listing.name) private listingModel: Model<ListingDocument>) { }
 
-    async createListing(sellerId: string, data: any): Promise<ListingDocument> {
+    async createListing(sellerId: string, data: { coordinates: number[];[key: string]: any }): Promise<ListingDocument> {
         const listing = new this.listingModel({
             sellerId: new Types.ObjectId(sellerId),
             ...data,
@@ -27,7 +27,7 @@ export class MarketplaceService {
         limit?: number;
         offset?: number;
     }): Promise<ListingDocument[]> {
-        const filter: any = { status: 'active' };
+        const filter: { status: string; $text?: any; location?: any } = { status: 'active' };
 
         if (query.term) {
             filter.$text = { $search: query.term };

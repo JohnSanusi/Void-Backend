@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Query, UseGuards, Req, Param } from '@nestjs/common';
 import { FeedService } from './feed.service';
 import { AuthGuard } from '@nestjs/passport';
+import type { RequestWithUser } from '../auth/interfaces/request-with-user.interface';
 
 @Controller('feed')
 @UseGuards(AuthGuard('jwt'))
@@ -8,7 +9,7 @@ export class FeedController {
     constructor(private readonly feedService: FeedService) { }
 
     @Post('posts')
-    async createPost(@Req() req, @Body() data: any) {
+    async createPost(@Req() req: RequestWithUser, @Body() data: any) {
         return this.feedService.createPost(req.user.userId, data);
     }
 
@@ -39,7 +40,7 @@ export class FeedController {
     }
 
     @Post('posts/:id/like')
-    async toggleLike(@Req() req, @Param('id') id: string) {
-        return this.feedService.toggleLike(id, req.user.userId);
+    async toggleLike(@Req() req: RequestWithUser, @Param('id') id: string) {
+        return this.feedService.toggleLike(id);
     }
 }

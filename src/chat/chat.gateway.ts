@@ -11,7 +11,6 @@ import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ChatService } from './chat.service';
-import { UseFilters, UseGuards } from '@nestjs/common';
 
 @WebSocketGateway({
     namespace: 'chat',
@@ -32,13 +31,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     async handleConnection(client: Socket) {
         try {
-            const token = client.handshake.auth?.token || client.handshake.headers?.authorization?.split(' ')[1];
+            const authHeader = client.handshake.headers?.authorization;
+            const token = client.handshake.auth?.token || (authHeader ? authHeader.split(' ')[1] : undefined);
             if (!token) {
                 client.disconnect();
                 return;
             }
 
-            const payload = await this.jwtService.verifyAsync(token, {
+            const payload = await this.jwtService.verifyAsync<{ sub: string; email: string }>(token, {
                 secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
             });
 
@@ -47,10 +47,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
             this.userSocketMap.set(userId, client.id);
 
             // Join a room specific to the user for easy targeting
-            client.join(`user_${userId}`);
+            await client.join(`user_${userId}`);
 
             console.log(`User connected: ${userId}`);
         } catch (err) {
+            console.error('Socket connection error:', err);
             client.disconnect();
         }
     }
@@ -74,7 +75,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client.emit('message_received_by_server', { clientMessageId: data.clientMessageId });
 
         // 2. Persist to DB Asynchronously
-        this.chatService.saveMessage({
+        void this.chatService.saveMessage({
             conversationId: data.conversationId,
             senderId,
             clientMessageId: data.clientMessageId,
@@ -87,6 +88,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
             // Notify sender of delivery (mock logic for "delivered" status)
             // In a real app, 'delivered' would come from recipient's socket ack
             client.emit('message_status_update', { messageId: savedMessage._id, status: 'delivered' });
+        }).catch(err => {
+            console.error('Failed to save message:', err);
         });
     }
 
