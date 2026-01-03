@@ -7,7 +7,7 @@ import { Post, PostDocument } from './schemas/post.schema';
 export class FeedService {
     constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) { }
 
-    async createPost(userId: string, data: any): Promise<PostDocument> {
+    async createPost(userId: string, data: { content: string; mediaUrls?: string[]; type: 'post' | 'reel'; visibility?: 'public' | 'followers' }): Promise<PostDocument> {
         const post = new this.postModel({
             authorId: new Types.ObjectId(userId),
             ...data,
@@ -16,7 +16,7 @@ export class FeedService {
     }
 
     async getFeed(limit = 20, lastId?: string, lastCreatedAt?: Date): Promise<PostDocument[]> {
-        const query: { visibility: string; $or?: any[] } = { visibility: 'public' };
+        const query: { visibility: string; $or?: Array<{ createdAt: { $lt: Date } } | { createdAt: Date; _id: { $lt: Types.ObjectId } }> } = { visibility: 'public' };
 
         if (lastId && lastCreatedAt) {
             query.$or = [
@@ -34,7 +34,7 @@ export class FeedService {
     }
 
     async getReels(limit = 10, lastId?: string, lastCreatedAt?: Date): Promise<PostDocument[]> {
-        const query: { type: string; visibility: string; $or?: any[] } = { type: 'reel', visibility: 'public' };
+        const query: { type: string; visibility: string; $or?: Array<{ createdAt: { $lt: Date } } | { createdAt: Date; _id: { $lt: Types.ObjectId } }> } = { type: 'reel', visibility: 'public' };
 
         if (lastId && lastCreatedAt) {
             query.$or = [

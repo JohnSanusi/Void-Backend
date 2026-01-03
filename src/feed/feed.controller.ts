@@ -9,7 +9,7 @@ export class FeedController {
     constructor(private readonly feedService: FeedService) { }
 
     @Post('posts')
-    async createPost(@Req() req: RequestWithUser, @Body() data: any) {
+    async createPost(@Req() req: RequestWithUser, @Body() data: { content: string; mediaUrls?: string[]; type: 'post' | 'reel'; visibility?: 'public' | 'followers' }) {
         return this.feedService.createPost(req.user.userId, data);
     }
 
