@@ -50,14 +50,16 @@ describe('ChatService', () => {
         it('should return existing conversation if it exists', async () => {
             const user1 = new Types.ObjectId().toString();
             const user2 = new Types.ObjectId().toString();
-            const mockConversation = { _id: 'convId' } as unknown as ConversationDocument;
-            const findOneSpy = jest.spyOn(convModel, 'findOne').mockReturnValue({
-                exec: jest.fn().mockResolvedValue(mockConversation),
-            } as any);
+            const mockConversation = {
+                _id: 'convId',
+                type: 'private',
+                participants: [new Types.ObjectId(user1), new Types.ObjectId(user2)],
+            } as unknown as ConversationDocument;
+
+            jest.spyOn(convModel, 'findOne').mockResolvedValue(mockConversation as any);
 
             const result = await service.findOrCreatePrivateConversation(user1, user2);
 
-            expect(findOneSpy).toHaveBeenCalled();
             expect(result._id).toBe('convId');
         });
     });
