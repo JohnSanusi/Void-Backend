@@ -89,12 +89,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
             mediaType: data.mediaType,
         }).then(savedMessage => {
             // 3. Deliver to recipient if online
-            const msg = savedMessage as any;
             this.server.to(`user_${data.recipientId}`).emit('new_message', savedMessage);
 
             // Notify sender of delivery (mock logic for "delivered" status)
             // In a real app, 'delivered' would come from recipient's socket ack
-            client.emit('message_status_update', { messageId: msg._id, status: 'delivered' });
+            const msgId = (savedMessage as unknown as { _id: Types.ObjectId })._id.toString();
+            client.emit('message_status_update', {
+                messageId: msgId,
+                status: 'delivered'
+            });
         }).catch(err => {
             console.error('Failed to save message:', err);
         });

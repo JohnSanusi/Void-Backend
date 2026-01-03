@@ -1,6 +1,6 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
+import { UserDocument } from '../users/schemas/user.schema';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException } from '@nestjs/common';
@@ -69,12 +69,13 @@ describe('AuthService', () => {
             };
 
             jest.spyOn(usersService, 'findByEmail').mockResolvedValue(null);
-            const createSpy = jest.spyOn(usersService, 'create').mockResolvedValue({ _id: 'userId', email: payload.email } as any);
-            jest.spyOn(jwtService, 'signAsync').mockResolvedValue('token');
+            const createSpy = jest.spyOn(usersService, 'create').mockResolvedValue({ _id: 'userId', email: payload.email } as unknown as UserDocument);
+            const signSpy = jest.spyOn(jwtService, 'signAsync').mockResolvedValue('token');
 
             const result = await service.validateGoogleUser(payload);
 
             expect(createSpy).toHaveBeenCalled();
+            expect(signSpy).toHaveBeenCalled();
             expect(result).toHaveProperty('accessToken');
             expect(result).toHaveProperty('refreshToken');
         });
@@ -82,23 +83,25 @@ describe('AuthService', () => {
 
     describe('refreshTokens', () => {
         it('should throw UnauthorizedException if user has no refresh token hash', async () => {
-            jest.spyOn(usersService, 'findById').mockResolvedValue({ refreshTokenHash: null } as any);
+            const findByIdSpy = jest.spyOn(usersService, 'findById').mockResolvedValue({ refreshTokenHash: null } as unknown as UserDocument);
             await expect(service.refreshTokens('userId', 'token')).rejects.toThrow(UnauthorizedException);
+            expect(findByIdSpy).toHaveBeenCalled();
         });
 
         it('should throw UnauthorizedException if refresh token does not match', async () => {
             const storedHash = await bcrypt.hash('different_token', 10);
-            jest.spyOn(usersService, 'findById').mockResolvedValue({ refreshTokenHash: storedHash } as any);
+            const findByIdSpy = jest.spyOn(usersService, 'findById').mockResolvedValue({ refreshTokenHash: storedHash } as unknown as UserDocument);
             await expect(service.refreshTokens('userId', 'token')).rejects.toThrow(UnauthorizedException);
+            expect(findByIdSpy).toHaveBeenCalled();
         });
     });
 
     describe('logout', () => {
         it('should call updateRefreshToken with null', async () => {
             const userId = 'userId';
-            jest.spyOn(usersService, 'updateRefreshToken').mockResolvedValue({} as any);
+            const updateSpy = jest.spyOn(usersService, 'updateRefreshToken').mockResolvedValue(undefined);
             await service.logout(userId);
-            expect(usersService.updateRefreshToken).toHaveBeenCalledWith(userId, null);
+            expect(updateSpy).toHaveBeenCalledWith(userId, null);
         });
     });
 });
