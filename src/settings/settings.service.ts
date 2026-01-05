@@ -31,7 +31,7 @@ export class SettingsService {
     }
 
     // Helper to construct $set object
-    private buildSetQuery(prefix: string, dto: any) {
+    private buildSetQuery(prefix: string, dto: Record<string, any>) {
         const query = {};
         for (const key in dto) {
             if (dto[key] !== undefined) {

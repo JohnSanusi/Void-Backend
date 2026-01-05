@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Post, Delete, Body, Param, UseGuards, Req, Query, Put } from '@nestjs/common';
+import { Controller, Get, Patch, Post, Delete, Body, Param, UseGuards, Req, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from './users.service';
 import { RequestWithUser } from '../auth/interfaces/request-with-user.interface';
@@ -17,12 +17,6 @@ export class UsersController {
     @Patch('profile')
     async updateProfile(@Req() req: RequestWithUser, @Body() dto: UpdateProfileDto) {
         return this.usersService.updateProfile(req.user.userId, dto);
-    }
-
-    @Get('check-username')
-    async checkUsername(@Query('username') username: string) {
-        // Simple check
-        return { available: true }; // TODO: Implement if needed, or rely on updateProfile error
     }
 
     @Get('search')

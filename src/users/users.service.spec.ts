@@ -20,7 +20,7 @@ const mockUser = (id, username, isPrivate = false) => ({
 
 describe('UsersService Social Features', () => {
     let service: UsersService;
-    let userModel: any;
+    let userModel: Model<User>;
 
     const mockUserModel = {
         findById: jest.fn().mockImplementation(() => ({
@@ -73,7 +73,7 @@ describe('UsersService Social Features', () => {
             // 3. isUserBlocked(current, target) -> findById(current).select().lean()
 
             // To make it cleaner, let's just mock the resolved values of the chain
-            userModel.findById.mockReturnValue({
+            (userModel.findById as jest.Mock).mockReturnValue({
                 select: jest.fn().mockReturnValue({
                     lean: jest.fn().mockResolvedValue({ blockedUsers: [] })
                 }),
@@ -92,7 +92,7 @@ describe('UsersService Social Features', () => {
             const targetUser = mockUser(user2Id, 'target', true);
 
             // Mock findById to handle both direct await (target lookup) and chainable calls (blocking check)
-            userModel.findById.mockReturnValue({
+            (userModel.findById as jest.Mock).mockReturnValue({
                 select: jest.fn().mockReturnValue({
                     lean: jest.fn().mockResolvedValue({ blockedUsers: [] })
                 }),
@@ -112,7 +112,7 @@ describe('UsersService Social Features', () => {
             const user2Id = new Types.ObjectId().toString();
             const targetUser = mockUser(user2Id, 'target', false);
 
-            userModel.findById.mockImplementation((id) => {
+            (userModel.findById as jest.Mock).mockImplementation((id) => {
                 if (id === user2Id) {
                     // Target user lookup
                     return {

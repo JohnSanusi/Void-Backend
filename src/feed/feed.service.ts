@@ -1,3 +1,7 @@
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types, FilterQuery } from 'mongoose';
+import { Post, PostDocument } from './schemas/post.schema'; // Assuming Post and PostDocument are defined here
 import { UsersService } from '../users/users.service';
 
 @Injectable()
@@ -18,7 +22,7 @@ export class FeedService {
     async getFeed(userId: string, limit = 20, lastId?: string, lastCreatedAt?: Date): Promise<PostDocument[]> {
         const blockedIds = await this.usersService.getBlockedUserIds(userId);
 
-        const query: any = {
+        const query: FilterQuery<PostDocument> = {
             visibility: 'public',
             authorId: { $nin: blockedIds.map(id => new Types.ObjectId(id)) }
         };
@@ -41,7 +45,7 @@ export class FeedService {
     async getReels(userId: string, limit = 10, lastId?: string, lastCreatedAt?: Date): Promise<PostDocument[]> {
         const blockedIds = await this.usersService.getBlockedUserIds(userId);
 
-        const query: any = {
+        const query: FilterQuery<PostDocument> = {
             type: 'reel',
             visibility: 'public',
             authorId: { $nin: blockedIds.map(id => new Types.ObjectId(id)) }

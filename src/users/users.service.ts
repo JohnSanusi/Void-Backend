@@ -101,7 +101,7 @@ export class UsersService {
 
             await session.commitTransaction();
             return { status: 'following' };
-        } catch (error) {
+        } catch (error: any) {
             await session.abortTransaction();
             throw error;
         } finally {
@@ -127,7 +127,7 @@ export class UsersService {
 
             await session.commitTransaction();
             return { status: 'unfollowed' };
-        } catch (error) {
+        } catch (error: any) {
             await session.abortTransaction();
             throw error;
         } finally {
@@ -164,7 +164,7 @@ export class UsersService {
 
             await session.commitTransaction();
             return { status: 'following' };
-        } catch (error) {
+        } catch (error: any) {
             await session.abortTransaction();
             throw error;
         } finally {

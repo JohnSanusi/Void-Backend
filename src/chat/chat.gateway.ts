@@ -8,10 +8,11 @@ import {
     WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Types } from 'mongoose';
+
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ChatService } from './chat.service';
+import { MessageDocument } from './schemas/message.schema';
 
 interface CustomSocket extends Socket {
     data: {
@@ -98,7 +99,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
             this.server.to(`user_${data.recipientId}`).emit('new_message', savedMessage);
 
             // Notify sender of delivery
-            const msgId = (savedMessage as any)._id.toString();
+            const msgId = (savedMessage as MessageDocument)._id.toString();
             client.emit('message_status_update', {
                 messageId: msgId,
                 status: 'delivered'

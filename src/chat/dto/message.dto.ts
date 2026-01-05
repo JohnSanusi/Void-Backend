@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, MaxLength } from 'class-validator';
+import { IsString, IsNotEmpty, IsMongoId, IsIn } from 'class-validator';
 
 export class SendMessageDto {
     @IsString()
