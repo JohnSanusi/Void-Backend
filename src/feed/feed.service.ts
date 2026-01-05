@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { Post, PostDocument } from './schemas/post.schema';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class FeedService {
-    constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) { }
+    constructor(
+        @InjectModel(Post.name) private postModel: Model<PostDocument>,
+        private usersService: UsersService,
+    ) { }
 
     async createPost(userId: string, data: { content: string; mediaUrls?: string[]; type: 'post' | 'reel'; visibility?: 'public' | 'followers' }): Promise<PostDocument> {
         const post = new this.postModel({
@@ -15,8 +15,13 @@ export class FeedService {
         return post.save();
     }
 
-    async getFeed(limit = 20, lastId?: string, lastCreatedAt?: Date): Promise<PostDocument[]> {
-        const query: { visibility: string; $or?: Array<{ createdAt: { $lt: Date } } | { createdAt: Date; _id: { $lt: Types.ObjectId } }> } = { visibility: 'public' };
+    async getFeed(userId: string, limit = 20, lastId?: string, lastCreatedAt?: Date): Promise<PostDocument[]> {
+        const blockedIds = await this.usersService.getBlockedUserIds(userId);
+
+        const query: any = {
+            visibility: 'public',
+            authorId: { $nin: blockedIds.map(id => new Types.ObjectId(id)) }
+        };
 
         if (lastId && lastCreatedAt) {
             query.$or = [
@@ -33,8 +38,14 @@ export class FeedService {
             .exec();
     }
 
-    async getReels(limit = 10, lastId?: string, lastCreatedAt?: Date): Promise<PostDocument[]> {
-        const query: { type: string; visibility: string; $or?: Array<{ createdAt: { $lt: Date } } | { createdAt: Date; _id: { $lt: Types.ObjectId } }> } = { type: 'reel', visibility: 'public' };
+    async getReels(userId: string, limit = 10, lastId?: string, lastCreatedAt?: Date): Promise<PostDocument[]> {
+        const blockedIds = await this.usersService.getBlockedUserIds(userId);
+
+        const query: any = {
+            type: 'reel',
+            visibility: 'public',
+            authorId: { $nin: blockedIds.map(id => new Types.ObjectId(id)) }
+        };
 
         if (lastId && lastCreatedAt) {
             query.$or = [

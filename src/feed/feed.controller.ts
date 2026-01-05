@@ -15,11 +15,13 @@ export class FeedController {
 
     @Get()
     async getFeed(
+        @Req() req: RequestWithUser,
         @Query('limit') limit: number,
         @Query('lastId') lastId: string,
         @Query('lastCreatedAt') lastCreatedAt: string,
     ) {
         return this.feedService.getFeed(
+            req.user.userId,
             limit ? Number(limit) : 20,
             lastId,
             lastCreatedAt ? new Date(lastCreatedAt) : undefined,
@@ -28,11 +30,13 @@ export class FeedController {
 
     @Get('reels')
     async getReels(
+        @Req() req: RequestWithUser,
         @Query('limit') limit: number,
         @Query('lastId') lastId: string,
         @Query('lastCreatedAt') lastCreatedAt: string,
     ) {
         return this.feedService.getReels(
+            req.user.userId,
             limit ? Number(limit) : 10,
             lastId,
             lastCreatedAt ? new Date(lastCreatedAt) : undefined,

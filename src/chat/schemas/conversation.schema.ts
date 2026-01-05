@@ -37,6 +37,18 @@ export class Conversation {
         groupAvatar?: string;
     };
 
+    @Prop({ type: [{ userId: Types.ObjectId, pinnedAt: Date }], default: [] })
+    pinned: { userId: Types.ObjectId; pinnedAt: Date }[];
+
+    @Prop({ type: [{ userId: Types.ObjectId, mutedUntil: Date }], default: [] })
+    muted: { userId: Types.ObjectId; mutedUntil: Date }[];
+
+    @Prop({ type: [{ userId: Types.ObjectId, archivedAt: Date }], default: [] })
+    archived: { userId: Types.ObjectId; archivedAt: Date }[];
+
+    @Prop({ type: [{ userId: Types.ObjectId }], default: [] })
+    unreadMarked: { userId: Types.ObjectId }[];
+
     @Prop()
     updatedAt: Date;
 }
@@ -45,3 +57,6 @@ export const ConversationSchema = SchemaFactory.createForClass(Conversation);
 
 // Ensure updatedAt is indexed for fast listing
 ConversationSchema.index({ updatedAt: -1 });
+ConversationSchema.index({ 'pinned.userId': 1 });
+ConversationSchema.index({ 'archived.userId': 1 });
+ConversationSchema.index({ 'muted.userId': 1 });

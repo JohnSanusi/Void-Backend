@@ -5,6 +5,8 @@ import { Conversation, ConversationDocument } from './schemas/conversation.schem
 import { Message, MessageDocument } from './schemas/message.schema';
 import { Model, Types } from 'mongoose';
 
+import { UsersService } from '../users/users.service';
+
 describe('ChatService', () => {
     let service: ChatService;
     let convModel: Model<ConversationDocument>;
@@ -32,6 +34,13 @@ describe('ChatService', () => {
                         findById: jest.fn(),
                         create: jest.fn(),
                         save: jest.fn(),
+                    },
+                },
+                {
+                    provide: UsersService,
+                    useValue: {
+                        isUserBlocked: jest.fn().mockResolvedValue(false),
+                        canMessage: jest.fn().mockResolvedValue(true),
                     },
                 },
             ],
