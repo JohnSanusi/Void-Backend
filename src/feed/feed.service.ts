@@ -28,7 +28,7 @@ export class FeedService {
         };
 
         if (lastId && lastCreatedAt) {
-            query.$or = [
+            (query as any).$or = [
                 { createdAt: { $lt: lastCreatedAt } },
                 { createdAt: lastCreatedAt, _id: { $lt: new Types.ObjectId(lastId) } },
             ];
@@ -52,7 +52,7 @@ export class FeedService {
         };
 
         if (lastId && lastCreatedAt) {
-            query.$or = [
+            (query as any).$or = [
                 { createdAt: { $lt: lastCreatedAt } },
                 { createdAt: lastCreatedAt, _id: { $lt: new Types.ObjectId(lastId) } },
             ];

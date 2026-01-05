@@ -125,7 +125,7 @@ export class SettingsService {
     }
 
     async deleteAccount(userId: string) {
-        return this.userModel.findByIdAndUpdate(userId, { deletedAt: new Date() });
+        return await this.userModel.findByIdAndUpdate(userId, { deletedAt: new Date() });
     }
 
     async downloadUserData(userId: string) {

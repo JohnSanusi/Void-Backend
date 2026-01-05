@@ -63,7 +63,9 @@ export class UsersService {
         if (!targetUser) throw new NotFoundException('User not found');
 
         // Check blocking
-        if (await this.isUserBlocked(targetUserId, currentUserId) || await this.isUserBlocked(currentUserId, targetUserId)) {
+        const blocked1 = await this.isUserBlocked(targetUserId, currentUserId);
+        const blocked2 = await this.isUserBlocked(currentUserId, targetUserId);
+        if (blocked1 || blocked2) {
             throw new BadRequestException('Cannot follow this user');
         }
 
@@ -222,6 +224,6 @@ export class UsersService {
     }
 
     async getFollowRequests(userId: string) {
-        return this.userModel.findById(userId).populate('followRequests', 'fullName username avatarUrl').select('followRequests');
+        return this.userModel.findById(userId).populate('followRequests', 'fullName username avatarUrl').select('followRequests').exec();
     }
 }

@@ -3,9 +3,9 @@ import { UsersService } from './users.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { Types } from 'mongoose';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 
-const mockUser = (id, username, isPrivate = false) => ({
+const mockUser = (id: string, username: string, isPrivate = false) => ({
     _id: id,
     username,
     isPrivate,
@@ -83,7 +83,7 @@ describe('UsersService Social Features', () => {
 
             const result = await service.followUser(user1Id, user2Id);
             expect(result).toEqual({ status: 'following' });
-            expect(userModel.findByIdAndUpdate).toHaveBeenCalledTimes(2); // One for target, one for current
+            expect((userModel.findByIdAndUpdate as jest.Mock)).toHaveBeenCalledTimes(2); // One for target, one for current
         });
 
         it('should request to follow a private user', async () => {
@@ -101,7 +101,7 @@ describe('UsersService Social Features', () => {
 
             const result = await service.followUser(user1Id, user2Id);
             expect(result).toEqual({ status: 'requested' });
-            expect(userModel.findByIdAndUpdate).toHaveBeenCalledWith(
+            expect((userModel.findByIdAndUpdate as jest.Mock)).toHaveBeenCalledWith(
                 user2Id,
                 expect.objectContaining({ $addToSet: { followRequests: expect.anything() } })
             );
@@ -141,12 +141,12 @@ describe('UsersService Social Features', () => {
             const user2Id = new Types.ObjectId().toString();
 
             // Mock finding "wasFollowing"
-            userModel.findOne.mockResolvedValue({ _id: user2Id }); // Truthy, means was following
+            (userModel.findOne as jest.Mock).mockResolvedValue({ _id: user2Id }); // Truthy, means was following
 
             const result = await service.unfollowUser(user1Id, user2Id);
             expect(result).toEqual({ status: 'unfollowed' });
             // Expect decrements
-            expect(userModel.findByIdAndUpdate).toHaveBeenCalledWith(user2Id, expect.objectContaining({ $inc: { followersCount: -1 } }), expect.anything());
+            expect((userModel.findByIdAndUpdate as jest.Mock)).toHaveBeenCalledWith(user2Id, expect.objectContaining({ $inc: { followersCount: -1 } }), expect.anything());
         });
     });
 
@@ -176,12 +176,12 @@ describe('UsersService Social Features', () => {
             // Maybe the issue is mockResolvedValue vs mockReturnValue with thenable mismatch if we messed with the global mock?
             // Let's use standard mockResolvedValue, assuming global mock reset in beforeEach clears specific implementations.
 
-            userModel.findById.mockResolvedValue(me);
+            (userModel.findById as jest.Mock).mockResolvedValue(me);
 
             const result = await service.handleFollowRequest(user1Id, user2Id, true);
             expect(result).toEqual({ status: 'following' });
             // Should pull request, add follower, inc counts
-            expect(userModel.findByIdAndUpdate).toHaveBeenCalledWith(
+            expect((userModel.findByIdAndUpdate as jest.Mock)).toHaveBeenCalledWith(
                 user1Id,
                 expect.objectContaining({ $pull: { followRequests: expect.anything() }, $addToSet: { followers: expect.anything() } }),
                 expect.anything()
@@ -192,12 +192,11 @@ describe('UsersService Social Features', () => {
             const user2Id = new Types.ObjectId().toString(); // Requester
             const me = mockUser(user1Id, 'me', true);
             me.followRequests = [new Types.ObjectId(user2Id)];
-
-            userModel.findById.mockResolvedValue(me);
+            (userModel.findById as jest.Mock).mockResolvedValue(me);
 
             const result = await service.handleFollowRequest(user1Id, user2Id, false);
             expect(result).toEqual({ status: 'rejected' });
-            expect(userModel.findByIdAndUpdate).toHaveBeenCalledWith(
+            expect((userModel.findByIdAndUpdate as jest.Mock)).toHaveBeenCalledWith(
                 user1Id,
                 expect.objectContaining({ $pull: { followRequests: expect.anything() } })
             );

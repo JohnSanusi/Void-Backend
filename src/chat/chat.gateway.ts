@@ -61,7 +61,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
             await client.join(`user_${userId}`);
 
             console.log(`User connected: ${userId}`);
-        } catch (err) {
+        } catch (err: any) {
             console.error('Socket connection error:', err);
             client.disconnect();
         }
@@ -104,7 +104,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 messageId: msgId,
                 status: 'delivered'
             });
-        } catch (err) {
+        } catch (err: any) {
             console.error('Failed to save message:', err);
             client.emit('message_error', {
                 clientMessageId: data.clientMessageId,
