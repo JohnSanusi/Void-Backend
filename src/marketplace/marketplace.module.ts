@@ -5,11 +5,11 @@ import { MarketplaceController } from './marketplace.controller';
 import { Listing, ListingSchema } from './schemas/listing.schema';
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([{ name: Listing.name, schema: ListingSchema }]),
-    ],
-    controllers: [MarketplaceController],
-    providers: [MarketplaceService],
-    exports: [MarketplaceService],
+  imports: [
+    MongooseModule.forFeature([{ name: Listing.name, schema: ListingSchema }]),
+  ],
+  controllers: [MarketplaceController],
+  providers: [MarketplaceService],
+  exports: [MarketplaceService],
 })
-export class MarketplaceModule { }
+export class MarketplaceModule {}

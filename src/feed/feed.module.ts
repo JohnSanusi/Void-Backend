@@ -5,11 +5,11 @@ import { FeedController } from './feed.controller';
 import { Post, PostSchema } from './schemas/post.schema';
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
-    ],
-    controllers: [FeedController],
-    providers: [FeedService],
-    exports: [FeedService],
+  imports: [
+    MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
+  ],
+  controllers: [FeedController],
+  providers: [FeedService],
+  exports: [FeedService],
 })
-export class FeedModule { }
+export class FeedModule {}

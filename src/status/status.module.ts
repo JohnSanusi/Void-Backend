@@ -5,11 +5,11 @@ import { StatusController } from './status.controller';
 import { Status, StatusSchema } from './schemas/status.schema';
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([{ name: Status.name, schema: StatusSchema }]),
-    ],
-    controllers: [StatusController],
-    providers: [StatusService],
-    exports: [StatusService],
+  imports: [
+    MongooseModule.forFeature([{ name: Status.name, schema: StatusSchema }]),
+  ],
+  controllers: [StatusController],
+  providers: [StatusService],
+  exports: [StatusService],
 })
-export class StatusModule { }
+export class StatusModule {}

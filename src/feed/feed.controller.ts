@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Query, UseGuards, Req, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Query,
+  UseGuards,
+  Req,
+  Param,
+} from '@nestjs/common';
 import { FeedService } from './feed.service';
 import { AuthGuard } from '@nestjs/passport';
 import type { RequestWithUser } from '../auth/interfaces/request-with-user.interface';
@@ -6,45 +15,54 @@ import type { RequestWithUser } from '../auth/interfaces/request-with-user.inter
 @Controller('feed')
 @UseGuards(AuthGuard('jwt'))
 export class FeedController {
-    constructor(private readonly feedService: FeedService) { }
+  constructor(private readonly feedService: FeedService) {}
 
-    @Post('posts')
-    async createPost(@Req() req: RequestWithUser, @Body() data: { content: string; mediaUrls?: string[]; type: 'post' | 'reel'; visibility?: 'public' | 'followers' }) {
-        return this.feedService.createPost(req.user.userId, data);
-    }
+  @Post('posts')
+  async createPost(
+    @Req() req: RequestWithUser,
+    @Body()
+    data: {
+      content: string;
+      mediaUrls?: string[];
+      type: 'post' | 'reel';
+      visibility?: 'public' | 'followers';
+    },
+  ) {
+    return this.feedService.createPost(req.user.userId, data);
+  }
 
-    @Get()
-    async getFeed(
-        @Req() req: RequestWithUser,
-        @Query('limit') limit: number,
-        @Query('lastId') lastId: string,
-        @Query('lastCreatedAt') lastCreatedAt: string,
-    ) {
-        return this.feedService.getFeed(
-            req.user.userId,
-            limit ? Number(limit) : 20,
-            lastId,
-            lastCreatedAt ? new Date(lastCreatedAt) : undefined,
-        );
-    }
+  @Get()
+  async getFeed(
+    @Req() req: RequestWithUser,
+    @Query('limit') limit: number,
+    @Query('lastId') lastId: string,
+    @Query('lastCreatedAt') lastCreatedAt: string,
+  ) {
+    return this.feedService.getFeed(
+      req.user.userId,
+      limit ? Number(limit) : 20,
+      lastId,
+      lastCreatedAt ? new Date(lastCreatedAt) : undefined,
+    );
+  }
 
-    @Get('reels')
-    async getReels(
-        @Req() req: RequestWithUser,
-        @Query('limit') limit: number,
-        @Query('lastId') lastId: string,
-        @Query('lastCreatedAt') lastCreatedAt: string,
-    ) {
-        return this.feedService.getReels(
-            req.user.userId,
-            limit ? Number(limit) : 10,
-            lastId,
-            lastCreatedAt ? new Date(lastCreatedAt) : undefined,
-        );
-    }
+  @Get('reels')
+  async getReels(
+    @Req() req: RequestWithUser,
+    @Query('limit') limit: number,
+    @Query('lastId') lastId: string,
+    @Query('lastCreatedAt') lastCreatedAt: string,
+  ) {
+    return this.feedService.getReels(
+      req.user.userId,
+      limit ? Number(limit) : 10,
+      lastId,
+      lastCreatedAt ? new Date(lastCreatedAt) : undefined,
+    );
+  }
 
-    @Post('posts/:id/like')
-    async toggleLike(@Req() req: RequestWithUser, @Param('id') id: string) {
-        return this.feedService.toggleLike(id);
-    }
+  @Post('posts/:id/like')
+  async toggleLike(@Req() req: RequestWithUser, @Param('id') id: string) {
+    return this.feedService.toggleLike(id);
+  }
 }

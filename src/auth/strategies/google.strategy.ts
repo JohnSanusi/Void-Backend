@@ -5,36 +5,37 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-    constructor(configService: ConfigService) {
-        super({
-            clientID: configService.get<string>('GOOGLE_CLIENT_ID') || 'dummy',
-            clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET') || 'dummy',
-            callbackURL: configService.get<string>('GOOGLE_CALLBACK_URL') || 'dummy',
-            scope: ['email', 'profile'],
-        });
-    }
+  constructor(configService: ConfigService) {
+    super({
+      clientID: configService.get<string>('GOOGLE_CLIENT_ID') || 'dummy',
+      clientSecret:
+        configService.get<string>('GOOGLE_CLIENT_SECRET') || 'dummy',
+      callbackURL: configService.get<string>('GOOGLE_CALLBACK_URL') || 'dummy',
+      scope: ['email', 'profile'],
+    });
+  }
 
-    validate(
-        accessToken: string,
-        refreshToken: string,
-        profile: {
-            id: string;
-            emails: { value: string; verified: boolean }[];
-            name: { givenName: string; familyName: string };
-            photos: { value: string }[];
-        },
-        done: VerifyCallback,
-    ): void {
-        const { name, emails, photos, id } = profile;
-        const user = {
-            sub: id,
-            email: emails[0].value,
-            email_verified: emails[0].verified,
-            firstName: name.givenName,
-            lastName: name.familyName,
-            picture: photos[0].value,
-            accessToken,
-        };
-        done(null, user);
-    }
+  validate(
+    accessToken: string,
+    refreshToken: string,
+    profile: {
+      id: string;
+      emails: { value: string; verified: boolean }[];
+      name: { givenName: string; familyName: string };
+      photos: { value: string }[];
+    },
+    done: VerifyCallback,
+  ): void {
+    const { name, emails, photos, id } = profile;
+    const user = {
+      sub: id,
+      email: emails[0].value,
+      email_verified: emails[0].verified,
+      firstName: name.givenName,
+      lastName: name.familyName,
+      picture: photos[0].value,
+      accessToken,
+    };
+    done(null, user);
+  }
 }

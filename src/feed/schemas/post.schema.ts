@@ -5,29 +5,29 @@ export type PostDocument = Post & Document;
 
 @Schema({ timestamps: true })
 export class Post {
-    @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
-    authorId: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
+  authorId: Types.ObjectId;
 
-    @Prop()
-    content: string;
+  @Prop()
+  content: string;
 
-    @Prop({ type: [String], default: [] })
-    mediaUrls: string[];
+  @Prop({ type: [String], default: [] })
+  mediaUrls: string[];
 
-    @Prop({ required: true, enum: ['post', 'reel'], index: true })
-    type: string;
+  @Prop({ required: true, enum: ['post', 'reel'], index: true })
+  type: string;
 
-    @Prop({ default: 0 })
-    likesCount: number;
+  @Prop({ default: 0 })
+  likesCount: number;
 
-    @Prop({ default: 0 })
-    commentsCount: number;
+  @Prop({ default: 0 })
+  commentsCount: number;
 
-    @Prop({ required: true, enum: ['public', 'followers'], default: 'public' })
-    visibility: string;
+  @Prop({ required: true, enum: ['public', 'followers'], default: 'public' })
+  visibility: string;
 
-    @Prop({ default: Date.now })
-    createdAt: Date;
+  @Prop({ default: Date.now })
+  createdAt: Date;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

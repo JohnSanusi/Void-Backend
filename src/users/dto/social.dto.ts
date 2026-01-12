@@ -1,27 +1,27 @@
 import { IsString, IsOptional, IsBoolean } from 'class-validator';
 
 export class UpdateProfileDto {
-    @IsOptional()
-    @IsString()
-    bio?: string;
+  @IsOptional()
+  @IsString()
+  bio?: string;
 
-    @IsOptional()
-    @IsBoolean()
-    isPrivate?: boolean;
+  @IsOptional()
+  @IsBoolean()
+  isPrivate?: boolean;
 
-    @IsOptional()
-    @IsString()
-    username?: string;
+  @IsOptional()
+  @IsString()
+  username?: string;
 
-    @IsOptional()
-    @IsString()
-    fullName?: string;
+  @IsOptional()
+  @IsString()
+  fullName?: string;
 }
 
 export class ManageRequestDto {
-    @IsString()
-    requesterId: string;
+  @IsString()
+  requesterId: string;
 
-    @IsBoolean()
-    accept: boolean;
+  @IsBoolean()
+  accept: boolean;
 }

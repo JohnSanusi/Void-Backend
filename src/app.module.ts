@@ -25,10 +25,12 @@ import { ThrottlerBehindProxyGuard } from './common/guards/throttle.guard';
         uri: configService.get<string>('MONGODB_URI'),
       }),
     }),
-    ThrottlerModule.forRoot([{
-      ttl: 60000,
-      limit: 60,
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 60,
+      },
+    ]),
     AuthModule,
     UsersModule,
     ChatModule,
@@ -45,4 +47,4 @@ import { ThrottlerBehindProxyGuard } from './common/guards/throttle.guard';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

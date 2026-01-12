@@ -6,13 +6,13 @@ import { User, UserSchema } from './schemas/user.schema';
 import { BlockedUser, BlockedUserSchema } from './schemas/blocked-user.schema';
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([
-            { name: User.name, schema: UserSchema },
-            { name: BlockedUser.name, schema: BlockedUserSchema },
-        ]),
-    ],
-    providers: [UsersService],
-    exports: [UsersService],
+  imports: [
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: BlockedUser.name, schema: BlockedUserSchema },
+    ]),
+  ],
+  providers: [UsersService],
+  exports: [UsersService],
 })
-export class UsersModule { }
+export class UsersModule {}

@@ -8,13 +8,13 @@ import { RefreshTokenStrategy } from './strategies/rt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
-    imports: [UsersModule, JwtModule.register({})],
-    controllers: [AuthController],
-    providers: [
-        AuthService,
-        AccessTokenStrategy,
-        RefreshTokenStrategy,
-        GoogleStrategy,
-    ],
+  imports: [UsersModule, JwtModule.register({})],
+  controllers: [AuthController],
+  providers: [
+    AuthService,
+    AccessTokenStrategy,
+    RefreshTokenStrategy,
+    GoogleStrategy,
+  ],
 })
-export class AuthModule { }
+export class AuthModule {}
