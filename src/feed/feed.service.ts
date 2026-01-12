@@ -35,7 +35,7 @@ export class FeedService {
   ): Promise<PostDocument[]> {
     const blockedIds = await this.usersService.getBlockedUserIds(userId);
 
-    const query: any = {
+    const query: FilterQuery<PostDocument> = {
       visibility: 'public',
       authorId: { $nin: blockedIds.map((id) => new Types.ObjectId(id)) },
     };
@@ -63,7 +63,7 @@ export class FeedService {
   ): Promise<PostDocument[]> {
     const blockedIds = await this.usersService.getBlockedUserIds(userId);
 
-    const query: any = {
+    const query: FilterQuery<PostDocument> = {
       type: 'reel',
       visibility: 'public',
       authorId: { $nin: blockedIds.map((id) => new Types.ObjectId(id)) },

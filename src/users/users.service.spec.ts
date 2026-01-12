@@ -94,8 +94,8 @@ describe('UsersService Social Features', () => {
           lean: jest.fn().mockResolvedValue({ blockedUsers: [] }),
         }),
         // The first call in followUser just awaits findById
-        then: (resolve) => resolve(targetUser),
-      });
+        then: (resolve: (val: any) => void) => resolve(targetUser),
+      } as any);
 
       const result = await service.followUser(user1Id, user2Id);
       expect(result).toEqual({ status: 'following' });
@@ -112,15 +112,15 @@ describe('UsersService Social Features', () => {
         select: jest.fn().mockReturnValue({
           lean: jest.fn().mockResolvedValue({ blockedUsers: [] }),
         }),
-        then: (resolve) => resolve(targetUser),
-      });
+        then: (resolve: (val: any) => void) => resolve(targetUser),
+      } as any);
 
       const result = await service.followUser(user1Id, user2Id);
       expect(result).toEqual({ status: 'requested' });
       expect(userModel.findByIdAndUpdate as jest.Mock).toHaveBeenCalledWith(
         user2Id,
         expect.objectContaining({
-          $addToSet: { followRequests: expect.anything() },
+          $addToSet: { followRequests: new Types.ObjectId(user1Id) },
         }),
       );
     });
@@ -139,16 +139,16 @@ describe('UsersService Social Features', () => {
                 blockedUsers: [new Types.ObjectId(user1Id)],
               }),
             }),
-            then: (resolve) => resolve(targetUser),
-          };
+            then: (resolve: (val: any) => void) => resolve(targetUser),
+          } as any;
         }
         // Current user lookup (for blocking check) or any other
         return {
           select: jest.fn().mockReturnValue({
             lean: jest.fn().mockResolvedValue({ blockedUsers: [] }), // Current user blocks no one
           }),
-          then: (resolve) => resolve({ blockedUsers: [] }),
-        };
+          then: (resolve: (val: any) => void) => resolve({ blockedUsers: [] }),
+        } as any;
       });
 
       await expect(service.followUser(user1Id, user2Id)).rejects.toThrow(
@@ -210,8 +210,8 @@ describe('UsersService Social Features', () => {
       expect(userModel.findByIdAndUpdate as jest.Mock).toHaveBeenCalledWith(
         user1Id,
         expect.objectContaining({
-          $pull: { followRequests: expect.anything() },
-          $addToSet: { followers: expect.anything() },
+          $pull: { followRequests: new Types.ObjectId(user2Id) },
+          $addToSet: { followers: new Types.ObjectId(user2Id) },
         }),
         expect.anything(),
       );
@@ -228,7 +228,7 @@ describe('UsersService Social Features', () => {
       expect(userModel.findByIdAndUpdate as jest.Mock).toHaveBeenCalledWith(
         user1Id,
         expect.objectContaining({
-          $pull: { followRequests: expect.anything() },
+          $pull: { followRequests: new Types.ObjectId(user2Id) },
         }),
       );
     });

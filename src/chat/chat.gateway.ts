@@ -12,7 +12,7 @@ import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ChatService } from './chat.service';
-import { MessageDocument } from './schemas/message.schema';
+
 
 interface CustomSocket extends Socket {
   data: {
@@ -115,7 +115,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         .emit('new_message', savedMessage);
 
       // Notify sender of delivery
-      const msgId = (savedMessage as MessageDocument)._id.toString();
+      const msgId = savedMessage._id.toString();
       client.emit('message_status_update', {
         messageId: msgId,
         status: 'delivered',
