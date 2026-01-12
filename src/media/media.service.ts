@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 
 @Injectable()
 export class MediaService {
@@ -19,14 +19,14 @@ export class MediaService {
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         { folder },
-        (error, result) => {
+        (error, result: UploadApiResponse | undefined) => {
           if (error || !result) {
             return reject(
               error instanceof Error
                 ? error
                 : new Error(
-                    (error as Record<string, any>)?.message || 'Upload failed',
-                  ),
+                  (error as Record<string, any>)?.message || 'Upload failed',
+                ),
             );
           }
           resolve(result.secure_url);

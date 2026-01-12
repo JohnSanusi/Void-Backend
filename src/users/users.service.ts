@@ -9,7 +9,7 @@ import { User, UserDocument } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
 
   async findByEmail(email: string): Promise<UserDocument | null> {
     return this.userModel.findOne({ email }).exec();
@@ -279,8 +279,8 @@ export class UsersService {
       isFollowing,
       isRequested,
       canViewContent,
-      followers: canViewContent ? profile.followers : [],
-      following: canViewContent ? profile.following : [],
+      followers: (canViewContent ? profile.followers : []) as Types.ObjectId[],
+      following: (canViewContent ? profile.following : []) as Types.ObjectId[],
       postsCount: profile.postsCount || 0,
       followersCount: profile.followersCount || 0,
       followingCount: profile.followingCount || 0,
@@ -290,7 +290,7 @@ export class UsersService {
   async updateProfile(userId: string, data: Record<string, any>) {
     if (data.username) {
       const existing = await this.userModel.findOne({
-        username: data.username,
+        username: data.username as string,
         _id: { $ne: userId },
       });
       if (existing) throw new BadRequestException('Username already taken');

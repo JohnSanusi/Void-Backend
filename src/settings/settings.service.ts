@@ -23,7 +23,7 @@ export class SettingsService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(BlockedUser.name)
     private blockedUserModel: Model<BlockedUserDocument>,
-  ) {}
+  ) { }
 
   async getSettings(userId: string) {
     const user = await this.userModel
@@ -50,7 +50,7 @@ export class SettingsService {
 
   // Helper to construct $set object
   private buildSetQuery(prefix: string, dto: Record<string, any>) {
-    const query = {};
+    const query: Record<string, any> = {};
     for (const key in dto) {
       if (dto[key] !== undefined) {
         query[`${prefix}.${key}`] = dto[key];

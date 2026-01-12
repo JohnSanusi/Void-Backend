@@ -9,7 +9,7 @@ export class FeedService {
   constructor(
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     private usersService: UsersService,
-  ) {}
+  ) { }
 
   async createPost(
     userId: string,
@@ -35,7 +35,7 @@ export class FeedService {
   ): Promise<PostDocument[]> {
     const blockedIds = await this.usersService.getBlockedUserIds(userId);
 
-    const query: FilterQuery<PostDocument> = {
+    const query: any = {
       visibility: 'public',
       authorId: { $nin: blockedIds.map((id) => new Types.ObjectId(id)) },
     };
@@ -63,7 +63,7 @@ export class FeedService {
   ): Promise<PostDocument[]> {
     const blockedIds = await this.usersService.getBlockedUserIds(userId);
 
-    const query: FilterQuery<PostDocument> = {
+    const query: any = {
       type: 'reel',
       visibility: 'public',
       authorId: { $nin: blockedIds.map((id) => new Types.ObjectId(id)) },
