@@ -21,14 +21,11 @@ export class MediaService {
         { folder },
         (error, result: UploadApiResponse | undefined) => {
           if (error || !result) {
-            return reject(
+            const errorMessage =
               error instanceof Error
-                ? error
-                : new Error(
-                    ((error as { message?: string })?.message as string) ||
-                      'Upload failed',
-                  ),
-            );
+                ? error.message
+                : (error as { message?: string })?.message || 'Upload failed';
+            return reject(new Error(errorMessage));
           }
           resolve(result.secure_url);
         },

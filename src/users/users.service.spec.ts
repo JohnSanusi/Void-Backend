@@ -139,16 +139,16 @@ describe('UsersService Social Features', () => {
                 blockedUsers: [new Types.ObjectId(user1Id)],
               }),
             }),
-            then: (resolve) => resolve(targetUser as any),
-          } as any;
+            then: (resolve: (val: any) => void) => resolve(targetUser),
+          };
         }
         // Current user lookup (for blocking check) or any other
         return {
           select: jest.fn().mockReturnValue({
             lean: jest.fn().mockResolvedValue({ blockedUsers: [] }), // Current user blocks no one
           }),
-          then: (resolve) => resolve({ blockedUsers: [] } as any),
-        } as any;
+          then: (resolve: (val: any) => void) => resolve({ blockedUsers: [] }),
+        };
       });
 
       await expect(service.followUser(user1Id, user2Id)).rejects.toThrow(

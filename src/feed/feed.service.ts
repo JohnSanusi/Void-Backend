@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, FilterQuery } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Post, PostDocument } from './schemas/post.schema'; // Assuming Post and PostDocument are defined here
 import { UsersService } from '../users/users.service';
 
@@ -35,24 +35,28 @@ export class FeedService {
   ): Promise<PostDocument[]> {
     const blockedIds = await this.usersService.getBlockedUserIds(userId);
 
-    const query: FilterQuery<PostDocument> = {
+    const query: any = {
       visibility: 'public',
       authorId: { $nin: blockedIds.map((id) => new Types.ObjectId(id)) },
     };
 
     if (lastId && lastCreatedAt) {
-      (query as any).$or = [
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      query.$or = [
         { createdAt: { $lt: lastCreatedAt } },
         { createdAt: lastCreatedAt, _id: { $lt: new Types.ObjectId(lastId) } },
       ];
     }
 
-    return this.postModel
-      .find(query)
-      .sort({ createdAt: -1, _id: -1 })
-      .limit(limit)
-      .populate('authorId', 'fullName avatarUrl')
-      .exec();
+    return (
+      this.postModel
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        .find(query)
+        .sort({ createdAt: -1, _id: -1 })
+        .limit(limit)
+        .populate('authorId', 'fullName avatarUrl')
+        .exec()
+    );
   }
 
   async getReels(
@@ -63,25 +67,29 @@ export class FeedService {
   ): Promise<PostDocument[]> {
     const blockedIds = await this.usersService.getBlockedUserIds(userId);
 
-    const query: FilterQuery<PostDocument> = {
+    const query: any = {
       type: 'reel',
       visibility: 'public',
       authorId: { $nin: blockedIds.map((id) => new Types.ObjectId(id)) },
     };
 
     if (lastId && lastCreatedAt) {
-      (query as any).$or = [
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      query.$or = [
         { createdAt: { $lt: lastCreatedAt } },
         { createdAt: lastCreatedAt, _id: { $lt: new Types.ObjectId(lastId) } },
       ];
     }
 
-    return this.postModel
-      .find(query)
-      .sort({ createdAt: -1, _id: -1 })
-      .limit(limit)
-      .populate('authorId', 'fullName avatarUrl')
-      .exec();
+    return (
+      this.postModel
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        .find(query)
+        .sort({ createdAt: -1, _id: -1 })
+        .limit(limit)
+        .populate('authorId', 'fullName avatarUrl')
+        .exec()
+    );
   }
 
   async toggleLike(postId: string): Promise<{ likesCount: number }> {
