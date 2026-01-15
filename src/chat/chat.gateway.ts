@@ -13,7 +13,6 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ChatService } from './chat.service';
 
-
 interface CustomSocket extends Socket {
   data: {
     userId: string;
@@ -38,7 +37,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private jwtService: JwtService,
     private configService: ConfigService,
     private chatService: ChatService,
-  ) { }
+  ) {}
 
   async handleConnection(client: CustomSocket) {
     try {

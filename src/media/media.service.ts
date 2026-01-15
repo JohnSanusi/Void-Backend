@@ -25,8 +25,9 @@ export class MediaService {
               error instanceof Error
                 ? error
                 : new Error(
-                  (error as Record<string, any>)?.message as string || 'Upload failed',
-                ),
+                    ((error as Record<string, any>)?.message as string) ||
+                      'Upload failed',
+                  ),
             );
           }
           resolve(result.secure_url);

@@ -23,7 +23,7 @@ export class SettingsService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(BlockedUser.name)
     private blockedUserModel: Model<BlockedUserDocument>,
-  ) { }
+  ) {}
 
   async getSettings(userId: string) {
     const user = await this.userModel
@@ -56,7 +56,7 @@ export class SettingsService {
         query[`${prefix}.${key}`] = dto[key];
       }
     }
-    return query as Record<string, any>;
+    return query;
   }
 
   async updatePrivacyPartial(userId: string, dto: UpdatePrivacyDto) {

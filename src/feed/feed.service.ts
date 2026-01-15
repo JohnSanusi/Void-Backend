@@ -9,7 +9,7 @@ export class FeedService {
   constructor(
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     private usersService: UsersService,
-  ) { }
+  ) {}
 
   async createPost(
     userId: string,
