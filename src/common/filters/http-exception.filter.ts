@@ -38,7 +38,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message:
         typeof message === 'string'
           ? message
-          : (message as Record<string, any>)?.message ||
+          : (message as { message?: string })?.message ||
             JSON.stringify(message),
     });
   }

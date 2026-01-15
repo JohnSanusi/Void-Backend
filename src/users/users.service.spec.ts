@@ -139,7 +139,7 @@ describe('UsersService Social Features', () => {
                 blockedUsers: [new Types.ObjectId(user1Id)],
               }),
             }),
-            then: (resolve: (val: any) => void) => resolve(targetUser),
+            then: (resolve) => resolve(targetUser as any),
           } as any;
         }
         // Current user lookup (for blocking check) or any other
@@ -147,7 +147,7 @@ describe('UsersService Social Features', () => {
           select: jest.fn().mockReturnValue({
             lean: jest.fn().mockResolvedValue({ blockedUsers: [] }), // Current user blocks no one
           }),
-          then: (resolve: (val: any) => void) => resolve({ blockedUsers: [] }),
+          then: (resolve) => resolve({ blockedUsers: [] } as any),
         } as any;
       });
 

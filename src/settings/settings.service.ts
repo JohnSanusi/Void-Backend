@@ -49,8 +49,8 @@ export class SettingsService {
   }
 
   // Helper to construct $set object
-  private buildSetQuery(prefix: string, dto: Record<string, any>) {
-    const query: Record<string, any> = {};
+  private buildSetQuery(prefix: string, dto: Record<string, unknown>) {
+    const query: Record<string, unknown> = {};
     for (const key in dto) {
       if (dto[key] !== undefined) {
         query[`${prefix}.${key}`] = dto[key];
