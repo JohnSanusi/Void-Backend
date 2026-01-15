@@ -26,11 +26,13 @@ export class TransformInterceptor<T> implements NestInterceptor<
     const response = context.switchToHttp().getResponse<Response>();
     const statusCode = response.statusCode as number;
     return next.handle().pipe(
+      /* eslint-disable @typescript-eslint/no-unsafe-assignment */
       map((data) => ({
         data,
         statusCode,
         message: 'Success',
       })),
+      /* eslint-enable @typescript-eslint/no-unsafe-assignment */
     );
   }
 }
