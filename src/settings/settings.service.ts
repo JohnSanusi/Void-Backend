@@ -53,6 +53,7 @@ export class SettingsService {
     const query: Record<string, any> = {};
     for (const key in dto) {
       if (dto[key] !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         query[`${prefix}.${key}`] = dto[key];
       }
     }
