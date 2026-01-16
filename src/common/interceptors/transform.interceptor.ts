@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Response } from 'express';
 
-export interface Response<T> {
+export interface ApiResponse<T> {
   data: T;
   statusCode: number;
   message: string;
@@ -17,22 +17,20 @@ export interface Response<T> {
 @Injectable()
 export class TransformInterceptor<T> implements NestInterceptor<
   T,
-  Response<T>
+  ApiResponse<T>
 > {
   intercept(
     context: ExecutionContext,
     next: CallHandler,
-  ): Observable<Response<T>> {
+  ): Observable<ApiResponse<T>> {
     const response = context.switchToHttp().getResponse<Response>();
-    const statusCode = response.statusCode as number;
+    const statusCode = +response.statusCode;
     return next.handle().pipe(
-      /* eslint-disable @typescript-eslint/no-unsafe-assignment */
       map((data) => ({
-        data,
+        data: data as T,
         statusCode,
         message: 'Success',
       })),
-      /* eslint-enable @typescript-eslint/no-unsafe-assignment */
     );
   }
 }
