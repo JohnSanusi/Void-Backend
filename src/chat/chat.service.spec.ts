@@ -70,7 +70,10 @@ describe('ChatService', () => {
         participants: [new Types.ObjectId(user1), new Types.ObjectId(user2)],
       } as unknown as ConversationDocument;
 
-      jest.spyOn(convModel, 'findOne').mockResolvedValue(mockConversation);
+      jest
+        .spyOn(convModel, 'findOne')
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        .mockResolvedValue(mockConversation as any);
 
       const result = await service.findOrCreatePrivateConversation(
         user1,
